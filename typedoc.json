@@ -1,0 +1,22 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs-site",
+  "name": "@magrinj/expo-quick-look",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "githubPages": true,
+  "intentionallyNotExported": ["ExpoQuickLookModule"],
+  "blockTags": [
+    "@defaultValue",
+    "@deprecated",
+    "@example",
+    "@param",
+    "@platform",
+    "@remarks",
+    "@returns",
+    "@see",
+    "@throws",
+    "@typeParam"
+  ]
+}

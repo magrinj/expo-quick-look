@@ -13,7 +13,8 @@
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
-    "open:android": "open -a \"Android Studio\" example/android"
+    "open:android": "open -a \"Android Studio\" example/android",
+    "docs": "typedoc"
   },
   "keywords": [
     "react-native",
@@ -35,7 +36,8 @@
     "eslint-config-expo": "~55.0.0",
     "expo-module-scripts": "^55.0.2",
     "expo": "~55.0.6",
-    "react-native": "0.83.2"
+    "react-native": "0.83.2",
+    "typedoc": "^0.28.0"
   },
   "peerDependencies": {
     "expo": "*",
