@@ -26,7 +26,7 @@ export type ThumbnailResult = {
   height: number;
 };
 
-export type DismissEvent = {};
+export type DismissEvent = object;
 
 export type EditedFileEvent = {
   filePath: string;

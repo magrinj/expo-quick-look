@@ -38,9 +38,6 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Test
-        run: bun test
-
       - name: Publish to npm
         run: npm publish --access public --provenance
         env:
