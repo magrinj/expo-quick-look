@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@magrinj/expo-quick-look": ["../src/index"],
+      "@magrinj/expo-quick-look/*": ["../src/*"]
+    }
+  }
+}

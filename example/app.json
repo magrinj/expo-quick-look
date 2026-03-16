@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "bundleIdentifier": "com.magrinj.expo-quick-look-example"
+  },
+  "android": {
+    "package": "com.magrinj.expoquicklookexample"
+  }
+}
