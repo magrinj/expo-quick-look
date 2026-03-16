@@ -1,7 +1,7 @@
 # @magrinj/expo-quick-look
 
 [![npm version](https://img.shields.io/npm/v/@magrinj/expo-quick-look.svg)](https://www.npmjs.com/package/@magrinj/expo-quick-look)
-[![license](https://img.shields.io/npm/l/@magrinj/expo-quick-look.svg)](LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-brightgreen)
 
 A native Expo module for previewing files using QuickLook on iOS and system viewers on Android.
