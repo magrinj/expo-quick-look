@@ -23,11 +23,11 @@
   ],
   "repository": "https://github.com/magrinj/expo-quick-look.git",
   "bugs": {
-    "url": "https://github.com/magrinj/expo-quick-look.git/issues"
+    "url": "https://github.com/magrinj/expo-quick-look/issues"
   },
   "author": "Jérémy Magrin <contact@magrin.fr> (magrinj)",
   "license": "MIT",
-  "homepage": "https://github.com/magrinj/expo-quick-look.git#readme",
+  "homepage": "https://github.com/magrinj/expo-quick-look#readme",
   "dependencies": {},
   "devDependencies": {
     "@types/react": "~19.2.2",

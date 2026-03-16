@@ -20,25 +20,26 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: oven-sh/setup-bun@v2
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
           registry-url: https://registry.npmjs.org
 
-      - run: npm ci
+      - run: bun install --frozen-lockfile
 
       - name: Update version
         run: npm version ${{ inputs.version }} --no-git-tag-version
 
       - name: Lint
-        run: npm run lint
+        run: bun run lint
 
       - name: Build
-        run: npm run build
+        run: bun run build
 
       - name: Test
-        run: npm test
+        run: bun test
 
       - name: Publish to npm
         run: npm publish --access public --provenance
