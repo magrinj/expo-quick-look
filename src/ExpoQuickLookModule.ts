@@ -17,7 +17,11 @@ import type {
  * ```ts
  * import ExpoQuickLook from '@magrinj/expo-quick-look';
  *
+ * // Local file
  * await ExpoQuickLook.previewFile({ filePath: '/path/to/file.pdf' });
+ *
+ * // Remote URL
+ * await ExpoQuickLook.previewFile({ filePath: 'https://example.com/doc.pdf' });
  * ```
  */
 declare class ExpoQuickLookModule extends NativeModule<{
@@ -31,7 +35,7 @@ declare class ExpoQuickLookModule extends NativeModule<{
   /**
    * Preview a single file. On Android this opens an intent chooser; on iOS it uses QLPreviewController.
    *
-   * @param options - File path and platform-specific options.
+   * @param options - Local file path or remote URL, and platform-specific options.
    */
   previewFile(options: PreviewFileOptions): Promise<void>;
   /**
@@ -44,7 +48,7 @@ declare class ExpoQuickLookModule extends NativeModule<{
   /**
    * Check whether a file can be previewed by the system.
    *
-   * @param filePath - Absolute path to the file.
+   * @param filePath - Local file path or remote URL.
    * @returns `true` if the file type is supported for preview.
    */
   canPreview(filePath: string): Promise<boolean>;

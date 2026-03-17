@@ -14,6 +14,9 @@ import expo.modules.kotlin.Promise
 import expo.modules.kotlin.exception.toCodedException
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.net.URLConnection
 
 data class PreviewOptions(
@@ -30,11 +33,15 @@ class ExpoQuickLookModule : Module() {
                 val activity = appContext.currentActivity
                     ?: throw MissingCurrentActivityException()
 
-                val resolvedPath = Uri.decode(options.filePath.removePrefix("file://"))
-                val targetFile = File(resolvedPath)
-
-                if (!targetFile.exists()) {
-                    throw FileNotFoundException(targetFile.absolutePath)
+                val targetFile: File = if (isRemoteURL(options.filePath)) {
+                    downloadToCache(options.filePath)
+                } else {
+                    val resolvedPath = Uri.decode(options.filePath.removePrefix("file://"))
+                    val file = File(resolvedPath)
+                    if (!file.exists()) {
+                        throw FileNotFoundException(file.absolutePath)
+                    }
+                    file
                 }
 
                 val resolvedMimeType = resolveMimeType(targetFile)
@@ -63,9 +70,20 @@ class ExpoQuickLookModule : Module() {
                 val activity = appContext.currentActivity
                     ?: throw MissingCurrentActivityException()
 
-                val resolvedPath = Uri.decode(filePath.removePrefix("file://"))
-                val targetFile = File(resolvedPath)
-                val resolvedMimeType = resolveMimeType(targetFile)
+                val resolvedMimeType: String = if (isRemoteURL(filePath)) {
+                    val urlPath = URL(filePath).path ?: ""
+                    val filename = urlPath.substringAfterLast("/")
+                    val ext = filename.substringAfterLast(".", "").lowercase()
+                    if (ext.isEmpty()) {
+                        promise.resolve(false)
+                        return@AsyncFunction
+                    }
+                    MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext) ?: "application/octet-stream"
+                } else {
+                    val resolvedPath = Uri.decode(filePath.removePrefix("file://"))
+                    val targetFile = File(resolvedPath)
+                    resolveMimeType(targetFile)
+                }
 
                 val checkIntent = Intent(Intent.ACTION_VIEW).apply {
                     setType(resolvedMimeType)
@@ -78,6 +96,47 @@ class ExpoQuickLookModule : Module() {
             } catch (e: Exception) {
                 promise.reject(e.toCodedException())
             }
+        }
+    }
+
+    private fun isRemoteURL(path: String): Boolean {
+        return path.startsWith("http://") || path.startsWith("https://")
+    }
+
+    private fun downloadToCache(urlString: String): File {
+        val url = URL(urlString)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.connectTimeout = 30_000
+        connection.readTimeout = 30_000
+        connection.instanceFollowRedirects = true
+
+        try {
+            val responseCode = connection.responseCode
+            if (responseCode !in 200..299) {
+                throw NetworkException("HTTP $responseCode")
+            }
+
+            val urlPath = url.path ?: throw NetworkException("Invalid URL path")
+            val filename = urlPath.substringAfterLast("/").ifEmpty { "download" }
+
+            val context = appContext.reactContext ?: throw MissingCurrentActivityException()
+            val cacheDir = File(context.cacheDir, "expo-quick-look")
+            cacheDir.mkdirs()
+            val destFile = File(cacheDir, "${System.currentTimeMillis()}_$filename")
+
+            connection.inputStream.use { input ->
+                FileOutputStream(destFile).use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            return destFile
+        } catch (e: java.net.SocketTimeoutException) {
+            throw DownloadTimeoutException()
+        } catch (e: java.io.IOException) {
+            throw NetworkException(e.message ?: "Download failed")
+        } finally {
+            connection.disconnect()
         }
     }
 
