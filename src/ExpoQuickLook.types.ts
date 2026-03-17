@@ -11,7 +11,7 @@ export type EditingMode = 'disabled' | 'createCopy' | 'updateContents';
  * Options for previewing a single file.
  */
 export type PreviewFileOptions = {
-  /** Absolute path to the file to preview. */
+  /** Local file path or remote URL (`https://...`) of the file to preview. */
   filePath: string;
   /**
    * Title shown in the Android share/chooser sheet.
@@ -30,7 +30,7 @@ export type PreviewFileOptions = {
  * @platform ios
  */
 export type PreviewFilesOptions = {
-  /** Array of absolute file paths to preview. */
+  /** Array of local file paths or remote URLs to preview. */
   filePaths: string[];
   /** Zero-based index of the file to show first. Defaults to `0`. */
   initialIndex?: number;
@@ -43,7 +43,7 @@ export type PreviewFilesOptions = {
  * @platform ios
  */
 export type ThumbnailOptions = {
-  /** Absolute path to the file to generate a thumbnail for. */
+  /** Absolute path to a local file to generate a thumbnail for. Remote URLs are not supported. */
   filePath: string;
   /** Desired thumbnail dimensions in points. */
   size: { width: number; height: number };

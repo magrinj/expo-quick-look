@@ -37,6 +37,14 @@ await ExpoQuickLook.previewFile({
 });
 ```
 
+**Remote files** are also supported — the library downloads the file automatically:
+
+```typescript
+await ExpoQuickLook.previewFile({
+  filePath: 'https://example.com/document.pdf',
+});
+```
+
 ### `previewFiles(options: PreviewFilesOptions): Promise<void>` *(iOS only)*
 
 Opens a multi-file preview with swipe navigation.
@@ -60,6 +68,8 @@ Checks whether a file can be previewed.
 const supported = await ExpoQuickLook.canPreview('/path/to/file.pdf');
 ```
 
+For remote URLs, this performs a best-effort check based on the file extension — no download occurs.
+
 ### `generateThumbnail(options: ThumbnailOptions): Promise<ThumbnailResult>` *(iOS only)*
 
 Generates a thumbnail for a file.
@@ -73,6 +83,8 @@ const thumbnail = await ExpoQuickLook.generateThumbnail({
 // thumbnail.uri - file:// URI to the generated PNG
 // thumbnail.width / thumbnail.height - pixel dimensions
 ```
+
+> **Note:** `generateThumbnail` only supports local files. Pass a remote URL and it will throw an error.
 
 ## Types
 
@@ -133,6 +145,7 @@ subscription.remove();
 | Editing/markup | Supported | Not supported |
 | Thumbnails | Supported | Not supported |
 | Events | All events | None |
+| Remote URL support | Download to temp + preview | Download to cache + launch |
 
 ## Support
 

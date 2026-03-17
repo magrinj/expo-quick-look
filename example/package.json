@@ -2,16 +2,15 @@
   "name": "expo-quick-look-example",
   "version": "0.0.1",
   "private": true,
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.ts",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios"
   },
   "dependencies": {
-    "@magrinj/expo-quick-look": "file:..",
     "expo": "~55.0.6",
-    "expo-asset": "~11.1.5",
+    "expo-asset": "~55.0.8",
     "react": "19.2.0",
     "react-native": "0.83.2",
     "react-native-safe-area-context": "~5.6.2"
@@ -19,5 +18,10 @@
   "devDependencies": {
     "@types/react": "~19.2.2",
     "typescript": "~5.9.2"
+  },
+  "expo": {
+    "autolinking": {
+      "nativeModulesDir": ".."
+    }
   }
 }

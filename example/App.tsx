@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { Asset } from "expo-asset";
+// eslint-disable-next-line import/no-unresolved
 import ExpoQuickLook from "@magrinj/expo-quick-look";
 import type {
   DismissEvent,
@@ -56,6 +57,18 @@ export default function App() {
       const path = await resolveAssetPath(require("./assets/sample.pdf"));
       await ExpoQuickLook.previewFile({ filePath: path });
       log("previewFile resolved");
+    } catch (e: any) {
+      log(`Error: ${e.message}`);
+    }
+  };
+
+  const handlePreviewRemotePDF = async () => {
+    try {
+      log("Opening remote PDF...");
+      await ExpoQuickLook.previewFile({
+        filePath: "https://pdfobject.com/pdf/sample-3pp.pdf",
+      });
+      log("remote previewFile resolved");
     } catch (e: any) {
       log(`Error: ${e.message}`);
     }
@@ -119,7 +132,9 @@ export default function App() {
           <Text style={styles.header}>expo-quick-look</Text>
 
           <Section title="Preview File">
-            <Button title="Preview PDF" onPress={handlePreviewPDF} />
+            <Button title="Preview PDF (local)" onPress={handlePreviewPDF} />
+            <View style={{ height: 8 }} />
+            <Button title="Preview PDF (remote)" onPress={handlePreviewRemotePDF} />
           </Section>
 
           {isIOS && (
