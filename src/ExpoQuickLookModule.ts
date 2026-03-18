@@ -18,10 +18,18 @@ import type {
  * import ExpoQuickLook from '@magrinj/expo-quick-look';
  *
  * // Local file
- * await ExpoQuickLook.previewFile({ filePath: '/path/to/file.pdf' });
+ * await ExpoQuickLook.previewFile({ uri: '/path/to/file.pdf' });
  *
  * // Remote URL
- * await ExpoQuickLook.previewFile({ filePath: 'https://example.com/doc.pdf' });
+ * await ExpoQuickLook.previewFile({ uri: 'https://example.com/doc.pdf' });
+ *
+ * // Authenticated remote URL
+ * await ExpoQuickLook.previewFile({
+ *   uri: 'https://api.example.com/documents/123/download',
+ *   requestOptions: {
+ *     headers: { Authorization: `Bearer ${token}` },
+ *   },
+ * });
  * ```
  */
 declare class ExpoQuickLookModule extends NativeModule<{
@@ -35,27 +43,27 @@ declare class ExpoQuickLookModule extends NativeModule<{
   /**
    * Preview a single file. On Android this opens an intent chooser; on iOS it uses QLPreviewController.
    *
-   * @param options - Local file path or remote URL, and platform-specific options.
+   * @param options - URI (local path or remote URL), request options, and platform-specific options.
    */
   previewFile(options: PreviewFileOptions): Promise<void>;
   /**
    * Preview multiple files with swipe navigation.
    *
-   * @param options - File paths, initial index, and editing mode.
+   * @param options - URIs, initial index, and editing mode.
    * @platform ios
    */
   previewFiles(options: PreviewFilesOptions): Promise<void>;
   /**
    * Check whether a file can be previewed by the system.
    *
-   * @param filePath - Local file path or remote URL.
+   * @param uri - Local file path or remote URL.
    * @returns `true` if the file type is supported for preview.
    */
-  canPreview(filePath: string): Promise<boolean>;
+  canPreview(uri: string): Promise<boolean>;
   /**
    * Generate a thumbnail image for a file.
    *
-   * @param options - File path, desired size, and optional scale.
+   * @param options - URI, desired size, and optional scale.
    * @returns URI, width, and height of the generated thumbnail.
    * @platform ios
    */

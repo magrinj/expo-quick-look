@@ -22,7 +22,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.magrinj.expoquicklookexample"
+      "package": "com.magrinj.expoquicklookexample",
+      "usesCleartextTraffic": true
     },
     "plugins": [
       "expo-asset"

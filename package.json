@@ -9,6 +9,7 @@
     "./mock": "./mocks/ExpoQuickLook.ts"
   },
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "build": "expo-module build",
     "clean": "expo-module clean",
     "lint": "expo-module lint",

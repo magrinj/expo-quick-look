@@ -1,12 +1,12 @@
 import ExpoModulesCore
 
-internal final class MissingCurrentViewControllerException: Exception {
+internal final class MissingCurrentViewControllerException: Exception, @unchecked Sendable {
     override var reason: String {
         "Cannot determine currently presented view controller"
     }
 }
 
-internal final class FileNotFoundException: Exception {
+internal final class FileNotFoundException: Exception, @unchecked Sendable {
     private let path: String
 
     init(path: String) {
@@ -19,7 +19,7 @@ internal final class FileNotFoundException: Exception {
     }
 }
 
-internal final class InvalidFileURLException: Exception {
+internal final class InvalidFileURLException: Exception, @unchecked Sendable {
     private let path: String
 
     init(path: String) {
@@ -32,13 +32,13 @@ internal final class InvalidFileURLException: Exception {
     }
 }
 
-internal final class EmptyFileListException: Exception {
+internal final class EmptyFileListException: Exception, @unchecked Sendable {
     override var reason: String {
         "File list must not be empty"
     }
 }
 
-internal final class ThumbnailGenerationException: Exception {
+internal final class ThumbnailGenerationException: Exception, @unchecked Sendable {
     private let path: String
 
     init(path: String) {
@@ -51,7 +51,7 @@ internal final class ThumbnailGenerationException: Exception {
     }
 }
 
-internal final class NetworkException: Exception {
+internal final class NetworkException: Exception, @unchecked Sendable {
     private let detail: String
 
     init(detail: String) {
@@ -64,13 +64,13 @@ internal final class NetworkException: Exception {
     }
 }
 
-internal final class DownloadTimeoutException: Exception {
+internal final class DownloadTimeoutException: Exception, @unchecked Sendable {
     override var reason: String {
         "Download timed out after 30 seconds"
     }
 }
 
-internal final class RemoteURLNotSupportedException: Exception {
+internal final class RemoteURLNotSupportedException: Exception, @unchecked Sendable {
     private let feature: String
 
     init(feature: String) {

@@ -19,8 +19,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLConnection
 
+data class RequestOptions(
+    @Field val headers: Map<String, String>? = null
+) : Record
+
 data class PreviewOptions(
-    @Field val filePath: String,
+    @Field val uri: String,
+    @Field val requestOptions: RequestOptions? = null,
     @Field val chooserTitle: String = "Open file with"
 ) : Record
 
@@ -33,10 +38,10 @@ class ExpoQuickLookModule : Module() {
                 val activity = appContext.currentActivity
                     ?: throw MissingCurrentActivityException()
 
-                val targetFile: File = if (isRemoteURL(options.filePath)) {
-                    downloadToCache(options.filePath)
+                val targetFile: File = if (isRemoteURL(options.uri)) {
+                    downloadToCache(options.uri, options.requestOptions?.headers)
                 } else {
-                    val resolvedPath = Uri.decode(options.filePath.removePrefix("file://"))
+                    val resolvedPath = Uri.decode(options.uri.removePrefix("file://"))
                     val file = File(resolvedPath)
                     if (!file.exists()) {
                         throw FileNotFoundException(file.absolutePath)
@@ -65,13 +70,13 @@ class ExpoQuickLookModule : Module() {
             }
         }
 
-        AsyncFunction("canPreview") { filePath: String, promise: Promise ->
+        AsyncFunction("canPreview") { uri: String, promise: Promise ->
             try {
                 val activity = appContext.currentActivity
                     ?: throw MissingCurrentActivityException()
 
-                val resolvedMimeType: String = if (isRemoteURL(filePath)) {
-                    val urlPath = URL(filePath).path ?: ""
+                val resolvedMimeType: String = if (isRemoteURL(uri)) {
+                    val urlPath = URL(uri).path ?: ""
                     val filename = urlPath.substringAfterLast("/")
                     val ext = filename.substringAfterLast(".", "").lowercase()
                     if (ext.isEmpty()) {
@@ -80,7 +85,7 @@ class ExpoQuickLookModule : Module() {
                     }
                     MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext) ?: "application/octet-stream"
                 } else {
-                    val resolvedPath = Uri.decode(filePath.removePrefix("file://"))
+                    val resolvedPath = Uri.decode(uri.removePrefix("file://"))
                     val targetFile = File(resolvedPath)
                     resolveMimeType(targetFile)
                 }
@@ -103,12 +108,13 @@ class ExpoQuickLookModule : Module() {
         return path.startsWith("http://") || path.startsWith("https://")
     }
 
-    private fun downloadToCache(urlString: String): File {
+    private fun downloadToCache(urlString: String, headers: Map<String, String>? = null): File {
         val url = URL(urlString)
         val connection = url.openConnection() as HttpURLConnection
         connection.connectTimeout = 30_000
         connection.readTimeout = 30_000
         connection.instanceFollowRedirects = true
+        headers?.forEach { (key, value) -> connection.setRequestProperty(key, value) }
 
         try {
             val responseCode = connection.responseCode

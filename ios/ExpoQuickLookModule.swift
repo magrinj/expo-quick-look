@@ -2,13 +2,19 @@ import ExpoModulesCore
 import QuickLook
 import UIKit
 
+struct RequestOptions: Record {
+    @Field var headers: [String: String]?
+}
+
 struct PreviewOptions: Record {
-    @Field var filePath: String
+    @Field var uri: String
+    @Field var requestOptions: RequestOptions?
     @Field var editingMode: String?
 }
 
 struct MultiPreviewOptions: Record {
-    @Field var filePaths: [String]
+    @Field var uris: [String]
+    @Field var requestOptions: RequestOptions?
     @Field var initialIndex: Int?
     @Field var editingMode: String?
 }
@@ -28,14 +34,14 @@ public class ExpoQuickLookModule: Module {
             Task {
                 do {
                     let fileURL: URL
-                    if self.isRemoteURL(options.filePath) {
-                        guard let remoteURL = URL(string: options.filePath) else {
-                            throw InvalidFileURLException(path: options.filePath)
+                    if self.isRemoteURL(options.uri) {
+                        guard let remoteURL = URL(string: options.uri) else {
+                            throw InvalidFileURLException(path: options.uri)
                         }
-                        fileURL = try await self.downloadToTempFile(from: remoteURL)
+                        fileURL = try await self.downloadToTempFile(from: remoteURL, headers: options.requestOptions?.headers)
                         self.tempFiles.append(fileURL)
                     } else {
-                        fileURL = try self.resolveFileURL(options.filePath)
+                        fileURL = try self.resolveFileURL(options.uri)
                     }
                     let editing = self.resolveEditingMode(options.editingMode)
                     try await self.presentPreview(items: [fileURL], startIndex: 0, editingMode: editing)
@@ -51,17 +57,17 @@ public class ExpoQuickLookModule: Module {
         AsyncFunction("previewFiles") { (options: MultiPreviewOptions, promise: Promise) in
             Task {
                 do {
-                    guard !options.filePaths.isEmpty else {
+                    guard !options.uris.isEmpty else {
                         throw EmptyFileListException()
                     }
 
                     var fileURLs: [URL] = []
-                    for path in options.filePaths {
+                    for path in options.uris {
                         if self.isRemoteURL(path) {
                             guard let remoteURL = URL(string: path) else {
                                 throw InvalidFileURLException(path: path)
                             }
-                            let localURL = try await self.downloadToTempFile(from: remoteURL)
+                            let localURL = try await self.downloadToTempFile(from: remoteURL, headers: options.requestOptions?.headers)
                             self.tempFiles.append(localURL)
                             fileURLs.append(localURL)
                         } else {
@@ -81,11 +87,11 @@ public class ExpoQuickLookModule: Module {
             }
         }
 
-        AsyncFunction("canPreview") { (filePath: String, promise: Promise) in
+        AsyncFunction("canPreview") { (uri: String, promise: Promise) in
             Task {
                 do {
-                    if self.isRemoteURL(filePath) {
-                        guard let url = URL(string: filePath),
+                    if self.isRemoteURL(uri) {
+                        guard let url = URL(string: uri),
                               let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
                             promise.resolve(false)
                             return
@@ -93,7 +99,7 @@ public class ExpoQuickLookModule: Module {
                         let ext = (components.path as NSString).pathExtension.lowercased()
                         promise.resolve(!ext.isEmpty)
                     } else {
-                        let fileURL = try self.resolveFileURL(filePath)
+                        let fileURL = try self.resolveFileURL(uri)
                         let result = QLPreviewController.canPreview(fileURL as QLPreviewItem)
                         promise.resolve(result)
                     }
@@ -106,11 +112,11 @@ public class ExpoQuickLookModule: Module {
         AsyncFunction("generateThumbnail") { (options: ThumbnailOptions, promise: Promise) in
             Task {
                 do {
-                    if self.isRemoteURL(options.filePath) {
+                    if self.isRemoteURL(options.uri) {
                         throw RemoteURLNotSupportedException(feature: "generateThumbnail")
                     }
 
-                    let fileURL = try self.resolveFileURL(options.filePath)
+                    let fileURL = try self.resolveFileURL(options.uri)
                     let w = options.size["width"] ?? 200
                     let h = options.size["height"] ?? 200
                     let s = options.scale ?? Double(UIScreen.main.scale)
@@ -156,9 +162,14 @@ public class ExpoQuickLookModule: Module {
         return fileURL
     }
 
-    private func downloadToTempFile(from url: URL) async throws -> URL {
+    private func downloadToTempFile(from url: URL, headers: [String: String]?) async throws -> URL {
         var request = URLRequest(url: url)
         request.timeoutInterval = 30
+        if let headers = headers {
+            for (key, value) in headers {
+                request.setValue(value, forHTTPHeaderField: key)
+            }
+        }
 
         let (tempURL, response): (URL, URLResponse)
         do {

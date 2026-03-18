@@ -29,7 +29,7 @@ Opens a native file preview.
 import ExpoQuickLook from '@magrinj/expo-quick-look';
 
 await ExpoQuickLook.previewFile({
-  filePath: '/path/to/file.pdf',
+  uri: '/path/to/file.pdf',
   // Android only
   chooserTitle: 'Open with',
   // iOS only - 'disabled' | 'createCopy' | 'updateContents'
@@ -41,7 +41,20 @@ await ExpoQuickLook.previewFile({
 
 ```typescript
 await ExpoQuickLook.previewFile({
-  filePath: 'https://example.com/document.pdf',
+  uri: 'https://example.com/document.pdf',
+});
+```
+
+**Authenticated downloads** — pass custom headers for protected endpoints:
+
+```typescript
+await ExpoQuickLook.previewFile({
+  uri: 'https://api.example.com/documents/123/download',
+  requestOptions: {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  },
 });
 ```
 
@@ -51,13 +64,13 @@ Opens a multi-file preview with swipe navigation.
 
 ```typescript
 await ExpoQuickLook.previewFiles({
-  filePaths: ['/path/to/file1.pdf', '/path/to/file2.png'],
+  uris: ['/path/to/file1.pdf', '/path/to/file2.png'],
   initialIndex: 0,
   editingMode: 'disabled',
 });
 ```
 
-### `canPreview(filePath: string): Promise<boolean>`
+### `canPreview(uri: string): Promise<boolean>`
 
 Checks whether a file can be previewed.
 
@@ -66,6 +79,8 @@ Checks whether a file can be previewed.
 
 ```typescript
 const supported = await ExpoQuickLook.canPreview('/path/to/file.pdf');
+// or a remote URL
+const supported = await ExpoQuickLook.canPreview('https://example.com/doc.pdf');
 ```
 
 For remote URLs, this performs a best-effort check based on the file extension — no download occurs.
@@ -76,7 +91,7 @@ Generates a thumbnail for a file.
 
 ```typescript
 const thumbnail = await ExpoQuickLook.generateThumbnail({
-  filePath: '/path/to/file.pdf',
+  uri: '/path/to/file.pdf',
   size: { width: 200, height: 200 },
   scale: 2, // defaults to device scale
 });
@@ -89,14 +104,20 @@ const thumbnail = await ExpoQuickLook.generateThumbnail({
 ## Types
 
 ```typescript
+type RequestOptions = {
+  headers?: Record<string, string>;
+};
+
 type PreviewFileOptions = {
-  filePath: string;
+  uri: string;
+  requestOptions?: RequestOptions;
   chooserTitle?: string;    // Android only
   editingMode?: EditingMode; // iOS only
 };
 
 type PreviewFilesOptions = {
-  filePaths: string[];
+  uris: string[];
+  requestOptions?: RequestOptions;
   initialIndex?: number;
   editingMode?: EditingMode;
 };
@@ -104,7 +125,7 @@ type PreviewFilesOptions = {
 type EditingMode = 'disabled' | 'createCopy' | 'updateContents';
 
 type ThumbnailOptions = {
-  filePath: string;
+  uri: string;
   size: { width: number; height: number };
   scale?: number;
 };

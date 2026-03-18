@@ -8,11 +8,21 @@
 export type EditingMode = 'disabled' | 'createCopy' | 'updateContents';
 
 /**
+ * HTTP request options for remote URL downloads.
+ */
+export type RequestOptions = {
+  /** HTTP headers to include when downloading remote URLs. Ignored for local files. */
+  headers?: Record<string, string>;
+};
+
+/**
  * Options for previewing a single file.
  */
 export type PreviewFileOptions = {
   /** Local file path or remote URL (`https://...`) of the file to preview. */
-  filePath: string;
+  uri: string;
+  /** HTTP request options for remote URL downloads. */
+  requestOptions?: RequestOptions;
   /**
    * Title shown in the Android share/chooser sheet.
    * @platform android
@@ -31,7 +41,9 @@ export type PreviewFileOptions = {
  */
 export type PreviewFilesOptions = {
   /** Array of local file paths or remote URLs to preview. */
-  filePaths: string[];
+  uris: string[];
+  /** HTTP request options for remote URL downloads. */
+  requestOptions?: RequestOptions;
   /** Zero-based index of the file to show first. Defaults to `0`. */
   initialIndex?: number;
   /** Controls whether the user can edit files during preview. */
@@ -44,7 +56,7 @@ export type PreviewFilesOptions = {
  */
 export type ThumbnailOptions = {
   /** Absolute path to a local file to generate a thumbnail for. Remote URLs are not supported. */
-  filePath: string;
+  uri: string;
   /** Desired thumbnail dimensions in points. */
   size: { width: number; height: number };
   /** Scale factor for the thumbnail (e.g. `2` for @2x). Defaults to the device scale. */

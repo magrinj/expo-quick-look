@@ -19,6 +19,7 @@ import type {
 } from "@magrinj/expo-quick-look";
 
 const isIOS = Platform.OS === "ios";
+const TEST_SERVER = isIOS ? "http://localhost:3333" : "http://10.0.2.2:3333";
 
 async function resolveAssetPath(module: number): Promise<string> {
   const [asset] = await Asset.loadAsync(module);
@@ -55,7 +56,7 @@ export default function App() {
   const handlePreviewPDF = async () => {
     try {
       const path = await resolveAssetPath(require("./assets/sample.pdf"));
-      await ExpoQuickLook.previewFile({ filePath: path });
+      await ExpoQuickLook.previewFile({ uri: path });
       log("previewFile resolved");
     } catch (e: any) {
       log(`Error: ${e.message}`);
@@ -66,9 +67,38 @@ export default function App() {
     try {
       log("Opening remote PDF...");
       await ExpoQuickLook.previewFile({
-        filePath: "https://pdfobject.com/pdf/sample-3pp.pdf",
+        uri: "https://pdfobject.com/pdf/sample-3pp.pdf",
       });
       log("remote previewFile resolved");
+    } catch (e: any) {
+      log(`Error: ${e.message}`);
+    }
+  };
+
+  const handlePreviewWithHeaders = async () => {
+    try {
+      log("Opening protected PDF with Bearer token...");
+      await ExpoQuickLook.previewFile({
+        uri: `${TEST_SERVER}/document.pdf`,
+        requestOptions: {
+          headers: {
+            Authorization: "Bearer test-secret-token",
+          },
+        },
+      });
+      log("previewFile with headers resolved");
+    } catch (e: any) {
+      log(`Error: ${e.message}`);
+    }
+  };
+
+  const handlePreviewWithoutHeaders = async () => {
+    try {
+      log("Opening protected PDF WITHOUT token (should fail)...");
+      await ExpoQuickLook.previewFile({
+        uri: `${TEST_SERVER}/document.pdf`,
+      });
+      log("previewFile without headers resolved");
     } catch (e: any) {
       log(`Error: ${e.message}`);
     }
@@ -81,7 +111,7 @@ export default function App() {
         resolveAssetPath(require("./assets/sample.png")),
         resolveAssetPath(require("./assets/sample.txt")),
       ]);
-      await ExpoQuickLook.previewFiles({ filePaths: paths, initialIndex: 0 });
+      await ExpoQuickLook.previewFiles({ uris: paths, initialIndex: 0 });
       log("previewFiles resolved");
     } catch (e: any) {
       log(`Error: ${e.message}`);
@@ -102,7 +132,7 @@ export default function App() {
     try {
       const path = await resolveAssetPath(require("./assets/sample.png"));
       await ExpoQuickLook.previewFile({
-        filePath: path,
+        uri: path,
         editingMode: "createCopy",
       });
       log("editing preview resolved");
@@ -115,7 +145,7 @@ export default function App() {
     try {
       const path = await resolveAssetPath(require("./assets/sample.pdf"));
       const result = await ExpoQuickLook.generateThumbnail({
-        filePath: path,
+        uri: path,
         size: { width: 200, height: 200 },
       });
       setThumbnailUri(result.uri);
@@ -135,6 +165,10 @@ export default function App() {
             <Button title="Preview PDF (local)" onPress={handlePreviewPDF} />
             <View style={{ height: 8 }} />
             <Button title="Preview PDF (remote)" onPress={handlePreviewRemotePDF} />
+            <View style={{ height: 8 }} />
+            <Button title="Preview PDF (with headers)" onPress={handlePreviewWithHeaders} />
+            <View style={{ height: 8 }} />
+            <Button title="Preview PDF (no token — should fail)" onPress={handlePreviewWithoutHeaders} />
           </Section>
 
           {isIOS && (

@@ -2,7 +2,7 @@ import QuickLook
 import ExpoModulesCore
 
 struct ThumbnailOptions: Record {
-    @Field var filePath: String
+    @Field var uri: String
     @Field var size: [String: Double]
     @Field var scale: Double?
 }
