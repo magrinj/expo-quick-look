@@ -4,6 +4,10 @@
   "description": "Expo quick look",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "exports": {
+    ".": "./build/index.js",
+    "./mock": "./mocks/ExpoQuickLook.ts"
+  },
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
