@@ -1,14 +1,21 @@
 import QuickLook
 
-class PreviewDataSource: QLPreviewControllerDataSource {
-    private let items: [URL]
+class PreviewItem: NSObject, QLPreviewItem {
+    let previewItemURL: URL?
+    let previewItemTitle: String?
 
-    init(items: [URL]) {
-        self.items = items
+    init(url: URL, title: String? = nil) {
+        self.previewItemURL = url
+        self.previewItemTitle = title ?? url.deletingPathExtension().lastPathComponent
+        super.init()
     }
+}
 
-    convenience init(item: URL) {
-        self.init(items: [item])
+class PreviewDataSource: QLPreviewControllerDataSource {
+    private let items: [PreviewItem]
+
+    init(items: [PreviewItem]) {
+        self.items = items
     }
 
     func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
@@ -16,6 +23,6 @@ class PreviewDataSource: QLPreviewControllerDataSource {
     }
 
     func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        return items[index] as QLPreviewItem
+        return items[index]
     }
 }

@@ -19,7 +19,7 @@ import type {
 } from "@magrinj/expo-quick-look";
 
 const isIOS = Platform.OS === "ios";
-const TEST_SERVER = isIOS ? "http://localhost:3333" : "http://10.0.2.2:3333";
+const TEST_SERVER = isIOS ? "http://10.5.1.102:3333" : "http://10.0.2.2:3333";
 
 async function resolveAssetPath(module: number): Promise<string> {
   const [asset] = await Asset.loadAsync(module);
@@ -87,6 +87,23 @@ export default function App() {
         },
       });
       log("previewFile with headers resolved");
+    } catch (e: any) {
+      log(`Error: ${e.message}`);
+    }
+  };
+
+  const handlePreviewApiEndpoint = async () => {
+    try {
+      log("Opening API endpoint (no file extension in URL)...");
+      await ExpoQuickLook.previewFile({
+        uri: `${TEST_SERVER}/api/v1/documents/download`,
+        requestOptions: {
+          headers: {
+            Authorization: "Bearer test-secret-token",
+          },
+        },
+      });
+      log("previewFile API endpoint resolved");
     } catch (e: any) {
       log(`Error: ${e.message}`);
     }
@@ -167,6 +184,8 @@ export default function App() {
             <Button title="Preview PDF (remote)" onPress={handlePreviewRemotePDF} />
             <View style={{ height: 8 }} />
             <Button title="Preview PDF (with headers)" onPress={handlePreviewWithHeaders} />
+            <View style={{ height: 8 }} />
+            <Button title="Preview API endpoint (no extension)" onPress={handlePreviewApiEndpoint} />
             <View style={{ height: 8 }} />
             <Button title="Preview PDF (no token — should fail)" onPress={handlePreviewWithoutHeaders} />
           </Section>

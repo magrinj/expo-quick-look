@@ -1,6 +1,7 @@
 import ExpoModulesCore
 import QuickLook
 import UIKit
+import UniformTypeIdentifiers
 
 struct RequestOptions: Record {
     @Field var headers: [String: String]?
@@ -23,15 +24,19 @@ public class ExpoQuickLookModule: Module {
     private var activeContinuation: CheckedContinuation<Void, Error>?
     private var activeDelegate: PreviewDelegate?
     private var activeController: PreviewController?
-    private var tempFiles: [URL] = []
 
     public func definition() -> ModuleDefinition {
         Name("ExpoQuickLook")
+
+        OnCreate {
+            self.cleanupCacheDirectory()
+        }
 
         Events("onDismiss", "onEditedFile", "onSavedEditedCopy")
 
         AsyncFunction("previewFile") { (options: PreviewOptions, promise: Promise) in
             Task {
+                var localFiles: [URL] = []
                 do {
                     let fileURL: URL
                     if self.isRemoteURL(options.uri) {
@@ -39,16 +44,17 @@ public class ExpoQuickLookModule: Module {
                             throw InvalidFileURLException(path: options.uri)
                         }
                         fileURL = try await self.downloadToTempFile(from: remoteURL, headers: options.requestOptions?.headers)
-                        self.tempFiles.append(fileURL)
+                        localFiles.append(fileURL)
                     } else {
                         fileURL = try self.resolveFileURL(options.uri)
                     }
                     let editing = self.resolveEditingMode(options.editingMode)
-                    try await self.presentPreview(items: [fileURL], startIndex: 0, editingMode: editing)
-                    self.cleanupTempFiles()
+                    let item = PreviewItem(url: fileURL)
+                    try await self.presentPreview(items: [item], startIndex: 0, editingMode: editing)
+                    Self.cleanupFiles(localFiles)
                     promise.resolve()
                 } catch {
-                    self.cleanupTempFiles()
+                    Self.cleanupFiles(localFiles)
                     promise.reject(error)
                 }
             }
@@ -56,32 +62,33 @@ public class ExpoQuickLookModule: Module {
 
         AsyncFunction("previewFiles") { (options: MultiPreviewOptions, promise: Promise) in
             Task {
+                var localFiles: [URL] = []
                 do {
                     guard !options.uris.isEmpty else {
                         throw EmptyFileListException()
                     }
 
-                    var fileURLs: [URL] = []
+                    var previewItems: [PreviewItem] = []
                     for path in options.uris {
                         if self.isRemoteURL(path) {
                             guard let remoteURL = URL(string: path) else {
                                 throw InvalidFileURLException(path: path)
                             }
                             let localURL = try await self.downloadToTempFile(from: remoteURL, headers: options.requestOptions?.headers)
-                            self.tempFiles.append(localURL)
-                            fileURLs.append(localURL)
+                            localFiles.append(localURL)
+                            previewItems.append(PreviewItem(url: localURL))
                         } else {
-                            fileURLs.append(try self.resolveFileURL(path))
+                            previewItems.append(PreviewItem(url: try self.resolveFileURL(path)))
                         }
                     }
 
-                    let startAt = min(max(options.initialIndex ?? 0, 0), fileURLs.count - 1)
+                    let startAt = min(max(options.initialIndex ?? 0, 0), previewItems.count - 1)
                     let editing = self.resolveEditingMode(options.editingMode)
-                    try await self.presentPreview(items: fileURLs, startIndex: startAt, editingMode: editing)
-                    self.cleanupTempFiles()
+                    try await self.presentPreview(items: previewItems, startIndex: startAt, editingMode: editing)
+                    Self.cleanupFiles(localFiles)
                     promise.resolve()
                 } catch {
-                    self.cleanupTempFiles()
+                    Self.cleanupFiles(localFiles)
                     promise.reject(error)
                 }
             }
@@ -100,7 +107,9 @@ public class ExpoQuickLookModule: Module {
                         promise.resolve(!ext.isEmpty)
                     } else {
                         let fileURL = try self.resolveFileURL(uri)
-                        let result = QLPreviewController.canPreview(fileURL as QLPreviewItem)
+                        let result = await MainActor.run {
+                            QLPreviewController.canPreview(fileURL as QLPreviewItem)
+                        }
                         promise.resolve(result)
                     }
                 } catch {
@@ -119,7 +128,12 @@ public class ExpoQuickLookModule: Module {
                     let fileURL = try self.resolveFileURL(options.uri)
                     let w = options.size["width"] ?? 200
                     let h = options.size["height"] ?? 200
-                    let s = options.scale ?? Double(UIScreen.main.scale)
+                    let s: Double
+                    if let scale = options.scale {
+                        s = scale
+                    } else {
+                        s = await Double(UIScreen.main.scale)
+                    }
 
                     let result = try await ThumbnailGenerator.generate(
                         fileURL: fileURL,
@@ -185,32 +199,75 @@ public class ExpoQuickLookModule: Module {
             throw NetworkException(detail: "HTTP \(httpResponse.statusCode)")
         }
 
-        let filename: String
-        if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-           let lastPath = components.path.split(separator: "/").last {
-            filename = String(lastPath)
-        } else {
-            filename = url.lastPathComponent
-        }
+        let resolvedName = Self.resolveFilename(from: url, response: response)
+        let ext = (resolvedName as NSString).pathExtension
+        let filename = ext.isEmpty ? UUID().uuidString : "\(UUID().uuidString).\(ext)"
 
-        let destURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathComponent(filename)
-
-        try FileManager.default.createDirectory(
-            at: destURL.deletingLastPathComponent(),
-            withIntermediateDirectories: true
+        // Use Caches directory instead of tmp — QLPreviewController's preview
+        // extension (separate process) has known issues accessing tmp files.
+        let cachesURL = try FileManager.default.url(
+            for: .cachesDirectory, in: .userDomainMask,
+            appropriateFor: nil, create: true
         )
+        let cacheDir = cachesURL.appendingPathComponent("expo-quick-look", isDirectory: true)
+        try FileManager.default.createDirectory(at: cacheDir, withIntermediateDirectories: true)
+        let destURL = cacheDir.appendingPathComponent(filename, isDirectory: false)
         try FileManager.default.moveItem(at: tempURL, to: destURL)
 
         return destURL
     }
 
-    private func cleanupTempFiles() {
-        for file in tempFiles {
-            try? FileManager.default.removeItem(at: file.deletingLastPathComponent())
+    private static func resolveFilename(from url: URL, response: URLResponse) -> String {
+        // 1. Try suggested filename from the response (Content-Disposition header)
+        //    URLSession parses this for us — most reliable source.
+        if let suggested = response.suggestedFilename,
+           (suggested as NSString).pathExtension.isEmpty == false {
+            return suggested
         }
-        tempFiles = []
+
+        // 2. Try the URL path's last component if it has an extension
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+           let lastPath = components.path.split(separator: "/").last {
+            let name = String(lastPath)
+            if (name as NSString).pathExtension.isEmpty == false {
+                return name
+            }
+        }
+
+        // 3. Infer extension from Content-Type via MIME type
+        let baseName: String = {
+            if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+               let lastPath = components.path.split(separator: "/").last,
+               !String(lastPath).isEmpty {
+                return String(lastPath)
+            }
+            return "document"
+        }()
+
+        if let mimeType = response.mimeType,
+           let uti = UTType(mimeType: mimeType),
+           let ext = uti.preferredFilenameExtension {
+            return "\(baseName).\(ext)"
+        }
+
+        // 4. Fallback — no extension, but at least a name
+        return baseName
+    }
+
+    private static func cleanupFiles(_ files: [URL]) {
+        for file in files {
+            try? FileManager.default.removeItem(at: file)
+        }
+    }
+
+    /// Removes all cached download files on module init
+    private func cleanupCacheDirectory() {
+        guard let cachesURL = try? FileManager.default.url(
+            for: .cachesDirectory, in: .userDomainMask,
+            appropriateFor: nil, create: false
+        ) else { return }
+        let cacheDir = cachesURL.appendingPathComponent("expo-quick-look")
+        try? FileManager.default.removeItem(at: cacheDir)
     }
 
     private func resolveEditingMode(_ mode: String?) -> QLPreviewItemEditingMode {
@@ -225,9 +282,31 @@ public class ExpoQuickLookModule: Module {
     }
 
     @MainActor
-    private func presentPreview(items: [URL], startIndex: Int, editingMode: QLPreviewItemEditingMode) async throws {
+    private func presentPreview(items: [PreviewItem], startIndex: Int, editingMode: QLPreviewItemEditingMode) async throws {
+        // Dismiss any existing preview and wait for it to fully complete
+        if let existingController = self.activeController {
+            self.activeContinuation?.resume(returning: ())
+            self.activeContinuation = nil
+            self.activeDelegate = nil
+            self.activeController = nil
+            await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+                existingController.dismiss(animated: false) {
+                    cont.resume()
+                }
+            }
+        }
+
         guard let viewController = self.appContext?.utilities?.currentViewController() else {
             throw MissingCurrentViewControllerException()
+        }
+
+        // If another view controller is still being dismissed, wait for that too
+        if viewController.presentedViewController != nil {
+            await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+                viewController.dismiss(animated: false) {
+                    cont.resume()
+                }
+            }
         }
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

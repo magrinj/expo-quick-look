@@ -122,8 +122,7 @@ class ExpoQuickLookModule : Module() {
                 throw NetworkException("HTTP $responseCode")
             }
 
-            val urlPath = url.path ?: throw NetworkException("Invalid URL path")
-            val filename = urlPath.substringAfterLast("/").ifEmpty { "download" }
+            val filename = resolveFilename(url, connection)
 
             val context = appContext.reactContext ?: throw MissingCurrentActivityException()
             val cacheDir = File(context.cacheDir, "expo-quick-look")
@@ -144,6 +143,41 @@ class ExpoQuickLookModule : Module() {
         } finally {
             connection.disconnect()
         }
+    }
+
+    private fun resolveFilename(url: URL, connection: HttpURLConnection): String {
+        val urlPath = url.path ?: ""
+        val lastSegment = urlPath.substringAfterLast("/").ifEmpty { "document" }
+
+        // 1. Try Content-Disposition header for a filename (most reliable)
+        val disposition = connection.getHeaderField("Content-Disposition")
+        if (disposition != null) {
+            val match = Regex("""filename\*?=(?:UTF-8''|"?)([^";]+)"?""", RegexOption.IGNORE_CASE)
+                .find(disposition)
+            if (match != null) {
+                val name = match.groupValues[1].trim()
+                if (name.isNotEmpty() && name.contains(".")) return name
+            }
+        }
+
+        // 2. URL path has an extension — use it directly
+        val urlExt = lastSegment.substringAfterLast(".", "").lowercase()
+        if (urlExt.isNotEmpty() && urlExt != lastSegment.lowercase()) {
+            return lastSegment
+        }
+
+        // 3. Infer extension from Content-Type
+        val contentType = connection.contentType
+        if (contentType != null) {
+            val mimeBase = contentType.substringBefore(";").trim()
+            val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeBase)
+            if (ext != null) {
+                return "$lastSegment.$ext"
+            }
+        }
+
+        // 4. Fallback
+        return lastSegment
     }
 
     private fun resolveMimeType(targetFile: File): String {
