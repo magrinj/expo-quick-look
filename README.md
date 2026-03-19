@@ -7,6 +7,9 @@
 [![npm version](https://img.shields.io/npm/v/@magrinj/expo-quick-look.svg)](https://www.npmjs.com/package/@magrinj/expo-quick-look)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-brightgreen)
+![CI](https://github.com/magrinj/expo-quick-look/actions/workflows/ci.yml/badge.svg)
+![npm downloads](https://img.shields.io/npm/dm/@magrinj/expo-quick-look)
+[![docs](https://img.shields.io/badge/docs-API_Reference-blue)](https://magrinj.github.io/expo-quick-look/)
 
 A native Expo module for previewing files using QuickLook on iOS and system viewers on Android.
 
@@ -167,6 +170,10 @@ subscription.remove();
 | Thumbnails | Supported | Not supported |
 | Events | All events | None |
 | Remote URL support | Download to temp + preview | Download to cache + launch |
+
+## Example
+
+See the [example app](./example/App.tsx) for a complete demo.
 
 ## Support
 

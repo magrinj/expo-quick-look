@@ -26,7 +26,14 @@
     "expo",
     "@magrinj/expo-quick-look",
     "ExpoQuickLook",
-    "FilePreview"
+    "FilePreview",
+    "quicklook",
+    "file-viewer",
+    "document-preview",
+    "qlpreviewcontroller",
+    "native-module",
+    "file-preview",
+    "document-viewer"
   ],
   "repository": "https://github.com/magrinj/expo-quick-look.git",
   "bugs": {
