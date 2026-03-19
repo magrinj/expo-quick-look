@@ -1,7 +1,7 @@
 {
   "name": "@magrinj/expo-quick-look",
   "version": "0.3.1",
-  "description": "Expo quick look",
+  "description": "Native file preview for Expo — QuickLook on iOS, Intent chooser on Android",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "exports": {
@@ -19,7 +19,27 @@
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
     "open:android": "open -a \"Android Studio\" example/android",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "release": "release-it"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release v${version}",
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": true,
+      "publishArgs": ["--access public --provenance"]
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
+      }
+    }
   },
   "keywords": [
     "react-native",
@@ -44,12 +64,14 @@
   "homepage": "https://github.com/magrinj/expo-quick-look#readme",
   "dependencies": {},
   "devDependencies": {
+    "@release-it/conventional-changelog": "^10.0.6",
     "@types/react": "~19.1.1",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~55.0.0",
-    "expo-module-scripts": "^55.0.2",
     "expo": "^55.0.5",
+    "expo-module-scripts": "^55.0.2",
     "react-native": "0.82.1",
+    "release-it": "^19.2.4",
     "typedoc": "^0.28.0"
   },
   "peerDependencies": {

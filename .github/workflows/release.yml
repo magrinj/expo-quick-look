@@ -3,10 +3,14 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version to release (e.g. 0.2.0)'
+      increment:
+        description: 'Version bump type'
         required: true
-        type: string
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   release:
@@ -31,48 +35,18 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - name: Update version
-        run: npm version ${{ inputs.version }} --no-git-tag-version
-
       - name: Lint
         run: bun run lint
 
       - name: Build
         run: bun run build
 
-      - name: Publish to npm
-        run: npm publish --access public
-
-      - name: Generate changelog
-        id: changelog
-        run: |
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$PREVIOUS_TAG" ]; then
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" HEAD)
-          else
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${PREVIOUS_TAG}..HEAD)
-          fi
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Commit and tag
+      - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json
-          git commit -m "chore: release v${{ inputs.version }}"
-          git tag "v${{ inputs.version }}"
-          git push
-          git push --tags
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ inputs.version }}
-          name: v${{ inputs.version }}
-          body: |
-            ## Changes
-
-            ${{ steps.changelog.outputs.changelog }}
-          generate_release_notes: false
+      - name: Release
+        run: bun run release -- ${{ inputs.increment }} --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
