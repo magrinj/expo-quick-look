@@ -13,20 +13,9 @@
 
 A native Expo module for previewing files using QuickLook on iOS and system viewers on Android.
 
-<table>
-  <tr>
-    <th>iOS</th>
-    <th>Android</th>
-  </tr>
-  <tr>
-    <td>
-      <video src="https://github.com/magrinj/expo-quick-look/raw/main/.github/assets/demo-ios.mp4" width="300" autoplay loop muted playsinline></video>
-    </td>
-    <td>
-      <video src="https://github.com/magrinj/expo-quick-look/raw/main/.github/assets/demo-android.mp4" width="300" autoplay loop muted playsinline></video>
-    </td>
-  </tr>
-</table>
+| iOS | Android |
+|:---:|:-------:|
+| <video src="https://github.com/user-attachments/assets/dea18630-4d38-425c-8839-73c46b2cbdfe" width="300" /> | <video src="https://github.com/user-attachments/assets/25238d03-597d-4609-aff7-a691e2a2714c" width="300" /> |
 
 ## Installation
 
