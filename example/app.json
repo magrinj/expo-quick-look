@@ -2,6 +2,7 @@
   "expo": {
     "name": "expo-quick-look-example",
     "slug": "expo-quick-look-example",
+    "scheme": "expo-quick-look-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -26,7 +27,8 @@
       "usesCleartextTraffic": true
     },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      "expo-router"
     ]
   }
 }

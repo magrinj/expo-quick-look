@@ -2,7 +2,7 @@
   "name": "expo-quick-look-example",
   "version": "0.0.1",
   "private": true,
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -11,9 +11,15 @@
   "dependencies": {
     "expo": "~55.0.6",
     "expo-asset": "~55.0.8",
+    "expo-constants": "~55.0.9",
+    "expo-linking": "~55.0.8",
+    "expo-router": "~55.0.7",
+    "expo-status-bar": "~55.0.4",
+    "expo-symbols": "~55.0.5",
     "react": "19.2.0",
     "react-native": "0.83.2",
-    "react-native-safe-area-context": "~5.6.2"
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-screens": "~4.23.0"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
