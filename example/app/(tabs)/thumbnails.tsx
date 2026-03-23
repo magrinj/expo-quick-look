@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// eslint-disable-next-line import/no-unresolved
 import ExpoQuickLook from "@magrinj/expo-quick-look";
 import { Section } from "../../components/Section";
 import { Row } from "../../components/Row";

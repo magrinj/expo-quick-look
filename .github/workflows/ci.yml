@@ -14,6 +14,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
+      - run: cd example && bun install
+      - run: cd website && bun install
       - run: bun run lint
 
   typecheck:
@@ -23,6 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
+      - run: cd example && bun install
       - run: bun run typecheck
 
   build:

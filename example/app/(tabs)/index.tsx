@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// eslint-disable-next-line import/no-unresolved
 import ExpoQuickLook from "@magrinj/expo-quick-look";
 import type {
   DismissEvent,

@@ -18,15 +18,16 @@ module.exports = defineConfig([
     files: ["example/**/*.{ts,tsx}"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
+      "import/no-unresolved": [
+        "error",
+        { ignore: ["^@magrinj/expo-quick-look"] },
+      ],
     },
   },
   {
     files: ["website/**/*.{ts,tsx,js,jsx}"],
     rules: {
-      "import/no-unresolved": [
-        "error",
-        { ignore: ["^@docusaurus/", "^@theme/", "^@site/"] },
-      ],
+      "import/no-unresolved": "off",
       "import/no-named-as-default": "off",
     },
   },
