@@ -63,3 +63,4 @@ docs/
 website/build/
 website/.docusaurus/
 website/docs/api/
+!website/docs/
