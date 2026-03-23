@@ -1,0 +1,48 @@
+.hero {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.installCommand {
+  margin: 1.5rem 0;
+}
+
+.installCommand code {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.features {
+  padding: 2rem 0;
+}
+
+.demos {
+  padding: 2rem 0 4rem;
+}
+
+.videoGrid {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.videoItem {
+  text-align: center;
+}
+
+.videoItem video {
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(45, 27, 78, 0.25);
+}

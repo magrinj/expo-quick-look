@@ -9,17 +9,19 @@
     "./mock": "./mocks/ExpoQuickLook.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p example",
     "build": "expo-module build",
     "clean": "expo-module clean",
-    "lint": "expo-module lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "expo-module test",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
     "open:android": "open -a \"Android Studio\" example/android",
-    "docs": "typedoc",
+    "docs": "cd website && bun run build",
+    "docs:dev": "cd website && bun start",
     "release": "release-it"
   },
   "release-it": {
@@ -68,11 +70,13 @@
     "@types/react": "~19.1.1",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~55.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
     "expo": "^55.0.5",
     "expo-module-scripts": "^55.0.2",
+    "prettier": "^3.8.1",
     "react-native": "0.82.1",
-    "release-it": "^19.2.4",
-    "typedoc": "^0.28.0"
+    "release-it": "^19.2.4"
   },
   "peerDependencies": {
     "expo": "*",

@@ -5,7 +5,7 @@
  * - `'createCopy'` — edits are saved as a new copy of the file
  * - `'updateContents'` — edits overwrite the original file
  */
-export type EditingMode = 'disabled' | 'createCopy' | 'updateContents';
+export type EditingMode = "disabled" | "createCopy" | "updateContents";
 
 /**
  * HTTP request options for remote URL downloads.

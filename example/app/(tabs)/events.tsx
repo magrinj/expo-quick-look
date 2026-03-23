@@ -15,36 +15,39 @@ export default function EventsTab() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Section title="Event Log">
-        <View style={styles.header}>
-          <Text style={styles.count}>
-            {events.length} event{events.length !== 1 ? "s" : ""}
-          </Text>
-          {events.length > 0 && (
-            <Pressable onPress={clear}>
-              <Text style={styles.clearButton}>Clear</Text>
-            </Pressable>
-          )}
-        </View>
-        {events.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No events yet</Text>
-            <Text style={styles.emptySubtext}>
-              Preview a file from the Preview tab to see events appear here.
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
+        <Section title="Event Log">
+          <View style={styles.header}>
+            <Text style={styles.count}>
+              {events.length} event{events.length !== 1 ? "s" : ""}
             </Text>
+            {events.length > 0 && (
+              <Pressable onPress={clear}>
+                <Text style={styles.clearButton}>Clear</Text>
+              </Pressable>
+            )}
           </View>
-        ) : (
-          <View style={styles.logList}>
-            {events.map((event, i) => (
-              <Text key={i} style={styles.logEntry}>
-                {event}
+          {events.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>No events yet</Text>
+              <Text style={styles.emptySubtext}>
+                Preview a file from the Preview tab to see events appear here.
               </Text>
-            ))}
-          </View>
-        )}
-      </Section>
-    </ScrollView>
+            </View>
+          ) : (
+            <View style={styles.logList}>
+              {events.map((event, i) => (
+                <Text key={i} style={styles.logEntry}>
+                  {event}
+                </Text>
+              ))}
+            </View>
+          )}
+        </Section>
+      </ScrollView>
     </SafeAreaView>
   );
 }

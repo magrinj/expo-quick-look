@@ -27,11 +27,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
     setEvents([]);
   }, []);
 
-  return (
-    <EventContext value={{ events, log, clear }}>
-      {children}
-    </EventContext>
-  );
+  return <EventContext value={{ events, log, clear }}>{children}</EventContext>;
 }
 
 export function useEvents() {

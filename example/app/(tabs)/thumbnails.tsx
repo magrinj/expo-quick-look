@@ -46,7 +46,8 @@ export default function ThumbnailsTab() {
           Thumbnail generation is only available on iOS.
         </Text>
         <Text style={styles.placeholderSubtext}>
-          This feature uses QLThumbnailGenerator which has no Android equivalent.
+          This feature uses QLThumbnailGenerator which has no Android
+          equivalent.
         </Text>
       </SafeAreaView>
     );
@@ -54,116 +55,119 @@ export default function ThumbnailsTab() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Section title="Generate Thumbnail">
-        <Row
-          label="From PDF"
-          subtitle="200×200 default scale"
-          onPress={() =>
-            handleAction("thumbPdf", async () => {
-              const path = await resolveAssetPath(
-                require("../../assets/sample.pdf")
-              );
-              const result = await ExpoQuickLook.generateThumbnail({
-                uri: path,
-                size: { width: 200, height: 200 },
-              });
-              setThumbnails((prev) => [
-                ...prev,
-                {
-                  uri: result.uri,
-                  width: result.width,
-                  height: result.height,
-                  label: "PDF",
-                },
-              ]);
-              log(`thumbnail (PDF): ${result.width}×${result.height}`);
-            })
-          }
-          error={errors.thumbPdf}
-        />
-        <Row
-          label="From Image"
-          subtitle="200×200 default scale"
-          onPress={() =>
-            handleAction("thumbImage", async () => {
-              const path = await resolveAssetPath(
-                require("../../assets/sample.png")
-              );
-              const result = await ExpoQuickLook.generateThumbnail({
-                uri: path,
-                size: { width: 200, height: 200 },
-              });
-              setThumbnails((prev) => [
-                ...prev,
-                {
-                  uri: result.uri,
-                  width: result.width,
-                  height: result.height,
-                  label: "Image",
-                },
-              ]);
-              log(`thumbnail (Image): ${result.width}×${result.height}`);
-            })
-          }
-          error={errors.thumbImage}
-        />
-        <Row
-          label="From PDF (@3x)"
-          subtitle="200×200 at 3x scale"
-          onPress={() =>
-            handleAction("thumbPdf3x", async () => {
-              const path = await resolveAssetPath(
-                require("../../assets/sample.pdf")
-              );
-              const result = await ExpoQuickLook.generateThumbnail({
-                uri: path,
-                size: { width: 200, height: 200 },
-                scale: 3,
-              });
-              setThumbnails((prev) => [
-                ...prev,
-                {
-                  uri: result.uri,
-                  width: result.width,
-                  height: result.height,
-                  label: "PDF @3x",
-                },
-              ]);
-              log(`thumbnail (PDF @3x): ${result.width}×${result.height}`);
-            })
-          }
-          error={errors.thumbPdf3x}
-          isLast
-        />
-      </Section>
-
-      {thumbnails.length > 0 && (
-        <Section title="Generated Thumbnails">
-          <View style={styles.grid}>
-            {thumbnails.map((thumb, i) => (
-              <Pressable
-                key={i}
-                style={styles.thumbItem}
-                onPress={() => {
-                  ExpoQuickLook.previewFile({ uri: thumb.uri });
-                  log(`previewing thumbnail: ${thumb.label}`);
-                }}
-              >
-                <Image
-                  source={{ uri: thumb.uri }}
-                  style={styles.thumbImage}
-                />
-                <Text style={styles.thumbLabel}>{thumb.label}</Text>
-                <Text style={styles.thumbDims}>
-                  {thumb.width}×{thumb.height}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
+        <Section title="Generate Thumbnail">
+          <Row
+            label="From PDF"
+            subtitle="200×200 default scale"
+            onPress={() =>
+              handleAction("thumbPdf", async () => {
+                const path = await resolveAssetPath(
+                  require("../../assets/sample.pdf"),
+                );
+                const result = await ExpoQuickLook.generateThumbnail({
+                  uri: path,
+                  size: { width: 200, height: 200 },
+                });
+                setThumbnails((prev) => [
+                  ...prev,
+                  {
+                    uri: result.uri,
+                    width: result.width,
+                    height: result.height,
+                    label: "PDF",
+                  },
+                ]);
+                log(`thumbnail (PDF): ${result.width}×${result.height}`);
+              })
+            }
+            error={errors.thumbPdf}
+          />
+          <Row
+            label="From Image"
+            subtitle="200×200 default scale"
+            onPress={() =>
+              handleAction("thumbImage", async () => {
+                const path = await resolveAssetPath(
+                  require("../../assets/sample.png"),
+                );
+                const result = await ExpoQuickLook.generateThumbnail({
+                  uri: path,
+                  size: { width: 200, height: 200 },
+                });
+                setThumbnails((prev) => [
+                  ...prev,
+                  {
+                    uri: result.uri,
+                    width: result.width,
+                    height: result.height,
+                    label: "Image",
+                  },
+                ]);
+                log(`thumbnail (Image): ${result.width}×${result.height}`);
+              })
+            }
+            error={errors.thumbImage}
+          />
+          <Row
+            label="From PDF (@3x)"
+            subtitle="200×200 at 3x scale"
+            onPress={() =>
+              handleAction("thumbPdf3x", async () => {
+                const path = await resolveAssetPath(
+                  require("../../assets/sample.pdf"),
+                );
+                const result = await ExpoQuickLook.generateThumbnail({
+                  uri: path,
+                  size: { width: 200, height: 200 },
+                  scale: 3,
+                });
+                setThumbnails((prev) => [
+                  ...prev,
+                  {
+                    uri: result.uri,
+                    width: result.width,
+                    height: result.height,
+                    label: "PDF @3x",
+                  },
+                ]);
+                log(`thumbnail (PDF @3x): ${result.width}×${result.height}`);
+              })
+            }
+            error={errors.thumbPdf3x}
+            isLast
+          />
         </Section>
-      )}
-    </ScrollView>
+
+        {thumbnails.length > 0 && (
+          <Section title="Generated Thumbnails">
+            <View style={styles.grid}>
+              {thumbnails.map((thumb, i) => (
+                <Pressable
+                  key={i}
+                  style={styles.thumbItem}
+                  onPress={() => {
+                    ExpoQuickLook.previewFile({ uri: thumb.uri });
+                    log(`previewing thumbnail: ${thumb.label}`);
+                  }}
+                >
+                  <Image
+                    source={{ uri: thumb.uri }}
+                    style={styles.thumbImage}
+                  />
+                  <Text style={styles.thumbLabel}>{thumb.label}</Text>
+                  <Text style={styles.thumbDims}>
+                    {thumb.width}×{thumb.height}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </Section>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }

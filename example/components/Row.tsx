@@ -14,10 +14,7 @@ export function Row({ label, subtitle, onPress, error, isLast }: Props) {
     <View>
       <Pressable
         onPress={onPress}
-        style={({ pressed }) => [
-          styles.row,
-          pressed && styles.pressed,
-        ]}
+        style={({ pressed }) => [styles.row, pressed && styles.pressed]}
       >
         <View style={styles.content}>
           <Text style={styles.label}>{label}</Text>

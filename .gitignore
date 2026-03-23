@@ -59,5 +59,7 @@ yarn-error.log
 # Docs (internal specs/plans)
 docs/
 
-# Generated documentation site
-docs-site/
+# Docusaurus
+website/build/
+website/.docusaurus/
+website/docs/api/

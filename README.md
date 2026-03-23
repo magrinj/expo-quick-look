@@ -9,9 +9,15 @@
 ![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-brightgreen)
 ![CI](https://github.com/magrinj/expo-quick-look/actions/workflows/ci.yml/badge.svg)
 ![npm downloads](https://img.shields.io/npm/dm/@magrinj/expo-quick-look)
-[![docs](https://img.shields.io/badge/docs-API_Reference-blue)](https://magrinj.github.io/expo-quick-look/)
+[![docs](https://img.shields.io/badge/docs-Documentation-blue)](https://magrinj.github.io/expo-quick-look/docs/getting-started)
 
 A native Expo module for previewing files using QuickLook on iOS and system viewers on Android.
+
+## Why this library?
+
+- **Native rendering, not a WebView** — Uses iOS QuickLook and Android system viewers. Supports 100+ file formats out of the box with instant rendering, built-in search, and print support.
+- **Built for Expo** — Zero config, no native linking. Just `npx expo install` and go. Full TypeScript API with async/await. Works on both New and Old Architecture.
+- **More than just preview** — Remote file downloads with auth headers, iOS editing/markup, multi-file swipe navigation, thumbnail generation, and lifecycle events (`onDismiss`, `onEditedFile`, `onSavedEditedCopy`). Most alternatives only open a local file in read-only mode.
 
 | iOS | Android |
 |:---:|:-------:|

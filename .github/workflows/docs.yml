@@ -22,15 +22,18 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: bun install
 
+      - name: Install website dependencies
+        run: cd website && bun install
+
       - name: Build documentation
-        run: bun run docs
+        run: cd website && bun run build
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs-site
+          path: website/build
 
   deploy:
     needs: build
