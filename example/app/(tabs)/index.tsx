@@ -1,8 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
-import { Platform, ScrollView, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ExpoQuickLook from "@magrinj/expo-quick-look";
 import type {
+  WillDismissEvent,
   DismissEvent,
   EditedFileEvent,
   SavedEditedCopyEvent,
@@ -25,6 +33,7 @@ export default function PreviewTab() {
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [results, setResults] = useState<Record<string, string>>({});
   const [editedCopyPath, setEditedCopyPath] = useState<string | null>(null);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
     const sub1 = ExpoQuickLook.addListener("onDismiss", (_: DismissEvent) => {
@@ -45,10 +54,18 @@ export default function PreviewTab() {
         setEditedCopyPath(e.editedPath);
       },
     );
+    const sub4 = ExpoQuickLook.addListener(
+      "onWillDismiss",
+      (_: WillDismissEvent) => {
+        log("onWillDismiss");
+        setShowSpinner(false);
+      },
+    );
     return () => {
       sub1.remove();
       sub2.remove();
       sub3.remove();
+      sub4.remove();
     };
   }, [log]);
 
@@ -70,6 +87,31 @@ export default function PreviewTab() {
         style={styles.container}
         contentContainerStyle={styles.content}
       >
+        {/* Card 0: Dismiss Lifecycle Demo */}
+        <Section title="Dismiss Lifecycle">
+          <Row
+            label="Preview with spinner"
+            subtitle="Spinner clears on onWillDismiss, before close animation ends"
+            onPress={() =>
+              handleAction("dismissLifecycle", async () => {
+                setShowSpinner(true);
+                try {
+                  const path = await resolveAssetPath(
+                    require("../../assets/sample.pdf"),
+                  );
+                  log("spinner shown, opening preview");
+                  await ExpoQuickLook.previewFile({ uri: path });
+                  log("previewFile (lifecycle demo) resolved");
+                } finally {
+                  setShowSpinner(false);
+                }
+              })
+            }
+            error={errors.dismissLifecycle}
+            isLast
+          />
+        </Section>
+
         {/* Card 1: Local Files */}
         <Section title="Local Files">
           <Row
@@ -357,11 +399,32 @@ export default function PreviewTab() {
           </Section>
         )}
       </ScrollView>
+      {showSpinner && (
+        <View style={styles.spinnerOverlay} pointerEvents="none">
+          <ActivityIndicator size="large" color="#007aff" />
+          <Text style={styles.spinnerLabel}>Loading PDF…</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f2f2f7" },
-  content: { padding: 16, paddingBottom: 40 },
+  content: { padding: 16, paddingBottom: 50 },
+  spinnerOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(242, 242, 247, 0.85)",
+  },
+  spinnerLabel: {
+    marginTop: 12,
+    fontSize: 15,
+    color: "#3c3c43",
+  },
 });

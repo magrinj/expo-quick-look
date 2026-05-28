@@ -76,6 +76,12 @@ export type ThumbnailResult = {
   height: number;
 };
 
+/**
+ * Emitted when the Quick Look preview is about to be dismissed (animation start).
+ * @platform ios
+ */
+export type WillDismissEvent = object;
+
 /** Emitted when the Quick Look preview is dismissed. */
 export type DismissEvent = object;
 

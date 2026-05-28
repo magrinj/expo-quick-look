@@ -6,6 +6,8 @@
 
 ### 🎉 New features
 
+- Add `onWillDismiss` event for iOS preview dismissal start ([#3](https://github.com/magrinj/expo-quick-look/issues/3))
+
 ### 🐛 Bug fixes
 
 ### 💡 Others

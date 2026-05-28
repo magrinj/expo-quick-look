@@ -32,7 +32,7 @@ public class ExpoQuickLookModule: Module {
             self.cleanupCacheDirectory()
         }
 
-        Events("onDismiss", "onEditedFile", "onSavedEditedCopy")
+        Events("onWillDismiss", "onDismiss", "onEditedFile", "onSavedEditedCopy")
 
         AsyncFunction("previewFile") { (options: PreviewOptions, promise: Promise) in
             Task {
@@ -314,6 +314,9 @@ public class ExpoQuickLookModule: Module {
 
             let delegate = PreviewDelegate()
             delegate.editingMode = editingMode
+            delegate.onWillDismiss = { [weak self] in
+                self?.sendEvent("onWillDismiss", [:])
+            }
             delegate.onDismiss = { [weak self] in
                 self?.sendEvent("onDismiss", [:])
                 self?.activeContinuation?.resume(returning: ())

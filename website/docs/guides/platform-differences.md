@@ -15,7 +15,7 @@ This library wraps platform-native file viewers, so behavior differs between iOS
 | **Multi-file preview** | Swipeable gallery | Not supported |
 | **Editing/markup** | Built-in markup tools | Not supported |
 | **Thumbnails** | `QLThumbnailGenerator` | Not supported |
-| **Events** | `onDismiss`, `onEditedFile`, `onSavedEditedCopy` | None |
+| **Events** | `onWillDismiss`, `onDismiss`, `onEditedFile`, `onSavedEditedCopy` | None |
 | **Remote files** | Download to temp + preview | Download to cache + launch |
 | **Chooser title** | Not applicable | Customizable via `chooserTitle` |
 

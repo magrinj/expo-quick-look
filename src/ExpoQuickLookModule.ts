@@ -5,6 +5,7 @@ import type {
   PreviewFilesOptions,
   ThumbnailOptions,
   ThumbnailResult,
+  WillDismissEvent,
   DismissEvent,
   EditedFileEvent,
   SavedEditedCopyEvent,
@@ -33,6 +34,11 @@ import type {
  * ```
  */
 declare class ExpoQuickLookModule extends NativeModule<{
+  /**
+   * Fired when the preview controller is about to be dismissed (animation start).
+   * @platform ios
+   */
+  onWillDismiss: (event: WillDismissEvent) => void;
   /** Fired when the preview controller is dismissed. */
   onDismiss: (event: DismissEvent) => void;
   /** Fired when a file is edited in-place (editingMode: `'updateContents'`). */

@@ -17,7 +17,7 @@ A native Expo module for previewing files using QuickLook on iOS and system view
 
 - **Native rendering, not a WebView** — Uses iOS QuickLook and Android system viewers. Supports 100+ file formats out of the box with instant rendering, built-in search, and print support.
 - **Built for Expo** — Zero config, no native linking. Just `npx expo install` and go. Full TypeScript API with async/await. Works on both New and Old Architecture.
-- **More than just preview** — Remote file downloads with auth headers, iOS editing/markup, multi-file swipe navigation, thumbnail generation, and lifecycle events (`onDismiss`, `onEditedFile`, `onSavedEditedCopy`). Most alternatives only open a local file in read-only mode.
+- **More than just preview** — Remote file downloads with auth headers, iOS editing/markup, multi-file swipe navigation, thumbnail generation, and lifecycle events (`onWillDismiss`, `onDismiss`, `onEditedFile`, `onSavedEditedCopy`). Most alternatives only open a local file in read-only mode.
 
 | iOS | Android |
 |:---:|:-------:|
@@ -156,6 +156,7 @@ Subscribe using `addListener` or the `useEvent` hook from Expo.
 
 | Event | Platform | Payload |
 |-------|----------|---------|
+| `onWillDismiss` | iOS | `{}` |
 | `onDismiss` | iOS | `{}` |
 | `onEditedFile` | iOS | `{ filePath: string }` |
 | `onSavedEditedCopy` | iOS | `{ originalPath: string, editedPath: string }` |

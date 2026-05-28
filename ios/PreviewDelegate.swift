@@ -2,9 +2,14 @@ import QuickLook
 
 class PreviewDelegate: NSObject, QLPreviewControllerDelegate {
     var editingMode: QLPreviewItemEditingMode = .disabled
+    var onWillDismiss: (() -> Void)?
     var onDismiss: (() -> Void)?
     var onEditedFile: ((_ filePath: String) -> Void)?
     var onSavedEditedCopy: ((_ originalPath: String, _ editedPath: String) -> Void)?
+
+    func previewControllerWillDismiss(_ controller: QLPreviewController) {
+        onWillDismiss?()
+    }
 
     func previewControllerDidDismiss(_ controller: QLPreviewController) {
         onDismiss?()
