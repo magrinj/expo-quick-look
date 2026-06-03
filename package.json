@@ -1,6 +1,6 @@
 {
   "name": "@magrinj/expo-quick-look",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Native file preview for Expo — QuickLook on iOS, Intent chooser on Android",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -45,7 +45,10 @@
     "npm": {
       "publish": true,
       "skipChecks": true,
-      "publishArgs": ["--access", "public"]
+      "publishArgs": [
+        "--access",
+        "public"
+      ]
     },
     "plugins": {
       "@release-it/conventional-changelog": {
