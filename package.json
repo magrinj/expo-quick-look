@@ -35,7 +35,7 @@
     "npm": {
       "publish": true,
       "skipChecks": true,
-      "publishArgs": ["--access public --provenance"]
+      "publishArgs": ["--access", "public", "--provenance"]
     },
     "plugins": {
       "@release-it/conventional-changelog": {
