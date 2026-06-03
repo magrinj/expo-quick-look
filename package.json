@@ -8,6 +8,16 @@
     ".": "./build/index.js",
     "./mock": "./mocks/ExpoQuickLook.ts"
   },
+  "files": [
+    "build",
+    "ios",
+    "android/build.gradle",
+    "android/src",
+    "src",
+    "mocks",
+    "expo-module.config.json",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit && tsc --noEmit -p example",
     "build": "expo-module build",
@@ -35,7 +45,7 @@
     "npm": {
       "publish": true,
       "skipChecks": true,
-      "publishArgs": ["--access", "public", "--provenance"]
+      "publishArgs": ["--access", "public"]
     },
     "plugins": {
       "@release-it/conventional-changelog": {

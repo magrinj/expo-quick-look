@@ -52,3 +52,9 @@ jobs:
         run: bun run release -- ${{ inputs.increment }} --ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show npm debug log on failure
+        if: failure()
+        run: |
+          echo "=== npm debug logs ==="
+          cat /home/runner/.npm/_logs/*-debug-0.log 2>/dev/null || echo "no debug log found"
