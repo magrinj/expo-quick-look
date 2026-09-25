@@ -53,10 +53,12 @@ declare class ExpoQuickLookModule extends NativeModule<{
    */
   previewFile(options: PreviewFileOptions): Promise<void>;
   /**
-   * Preview multiple files with swipe navigation.
+   * Preview multiple files with swipe navigation on iOS, or open each file in a new
+   * browser tab on web.
    *
    * @param options - URIs, initial index, and editing mode.
    * @platform ios
+   * @platform web
    */
   previewFiles(options: PreviewFilesOptions): Promise<void>;
   /**
