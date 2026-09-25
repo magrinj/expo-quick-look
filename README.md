@@ -23,6 +23,10 @@ A native Expo module for previewing files using QuickLook on iOS and system view
 |:---:|:-------:|
 | <video src="https://github.com/user-attachments/assets/dea18630-4d38-425c-8839-73c46b2cbdfe" width="300" /> | <video src="https://github.com/user-attachments/assets/25238d03-597d-4609-aff7-a691e2a2714c" width="300" /> |
 
+| Web |
+|:---:|
+| <video src="https://github.com/user-attachments/assets/e25183d0-8a7a-403e-83e4-6f4a007d2127" width="640" /> |
+
 ## Installation
 
 ```bash
