@@ -7,10 +7,16 @@ const config = getDefaultConfig(__dirname);
 // npm v7+ will install ../node_modules/react and ../node_modules/react-native because of peerDependencies.
 // To prevent the incompatible react-native between ./node_modules/react-native and ../node_modules/react-native,
 // excludes the one from the parent folder when bundling.
+// Same for the expo packages ../src imports: without this they resolve from ../node_modules,
+// the bundle gets a second copy of expo, and on web its HMR client registers the page URL,
+// which crashes Metro.
 config.resolver.blockList = [
   ...Array.from(config.resolver.blockList ?? []),
   new RegExp(path.resolve('..', 'node_modules', 'react')),
   new RegExp(path.resolve('..', 'node_modules', 'react-native')),
+  new RegExp(
+    `^${path.resolve(__dirname, '..', 'node_modules')}/(expo|expo-modules-core)/`,
+  ),
 ];
 
 config.resolver.nodeModulesPaths = [

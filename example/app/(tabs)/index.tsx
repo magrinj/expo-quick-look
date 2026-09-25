@@ -27,6 +27,7 @@ import {
 } from "../../lib/config";
 
 const isIOS = Platform.OS === "ios";
+const isWeb = Platform.OS === "web";
 
 export default function PreviewTab() {
   const { log } = useEvents();
@@ -186,7 +187,7 @@ export default function PreviewTab() {
         </Section>
 
         {/* Card 3: Multi-File Preview (iOS only) */}
-        {isIOS && (
+        {(isIOS || isWeb) && (
           <Section title="Multi-File Preview">
             <Row
               label="Preview 3 files"
@@ -211,58 +212,60 @@ export default function PreviewTab() {
           </Section>
         )}
 
-        {/* Card 4: Authenticated Files */}
-        <Section title="Authenticated Files">
-          <Row
-            label="Protected PDF (with token)"
-            subtitle={TEST_SERVER}
-            onPress={() =>
-              handleAction("authPdf", async () => {
-                log("Opening protected PDF with Bearer token...");
-                await ExpoQuickLook.previewFile({
-                  uri: `${TEST_SERVER}/document.pdf`,
-                  requestOptions: {
-                    headers: { Authorization: AUTH_TOKEN },
-                  },
-                });
-                log("previewFile (auth PDF) resolved");
-              })
-            }
-            error={errors.authPdf}
-          />
-          <Row
-            label="API Endpoint (no extension)"
-            subtitle="Content-Disposition filename"
-            onPress={() =>
-              handleAction("apiEndpoint", async () => {
-                log("Opening API endpoint...");
-                await ExpoQuickLook.previewFile({
-                  uri: `${TEST_SERVER}/api/v1/documents/download`,
-                  requestOptions: {
-                    headers: { Authorization: AUTH_TOKEN },
-                  },
-                });
-                log("previewFile (API endpoint) resolved");
-              })
-            }
-            error={errors.apiEndpoint}
-          />
-          <Row
-            label="Without token (should fail)"
-            subtitle="Expects 401 error"
-            onPress={() =>
-              handleAction("noAuth", async () => {
-                log("Opening protected PDF WITHOUT token...");
-                await ExpoQuickLook.previewFile({
-                  uri: `${TEST_SERVER}/document.pdf`,
-                });
-                log("previewFile (no auth) resolved");
-              })
-            }
-            error={errors.noAuth}
-            isLast
-          />
-        </Section>
+        {/* Card 4: Authenticated Files (headers are ignored on web) */}
+        {!isWeb && (
+          <Section title="Authenticated Files">
+            <Row
+              label="Protected PDF (with token)"
+              subtitle={TEST_SERVER}
+              onPress={() =>
+                handleAction("authPdf", async () => {
+                  log("Opening protected PDF with Bearer token...");
+                  await ExpoQuickLook.previewFile({
+                    uri: `${TEST_SERVER}/document.pdf`,
+                    requestOptions: {
+                      headers: { Authorization: AUTH_TOKEN },
+                    },
+                  });
+                  log("previewFile (auth PDF) resolved");
+                })
+              }
+              error={errors.authPdf}
+            />
+            <Row
+              label="API Endpoint (no extension)"
+              subtitle="Content-Disposition filename"
+              onPress={() =>
+                handleAction("apiEndpoint", async () => {
+                  log("Opening API endpoint...");
+                  await ExpoQuickLook.previewFile({
+                    uri: `${TEST_SERVER}/api/v1/documents/download`,
+                    requestOptions: {
+                      headers: { Authorization: AUTH_TOKEN },
+                    },
+                  });
+                  log("previewFile (API endpoint) resolved");
+                })
+              }
+              error={errors.apiEndpoint}
+            />
+            <Row
+              label="Without token (should fail)"
+              subtitle="Expects 401 error"
+              onPress={() =>
+                handleAction("noAuth", async () => {
+                  log("Opening protected PDF WITHOUT token...");
+                  await ExpoQuickLook.previewFile({
+                    uri: `${TEST_SERVER}/document.pdf`,
+                  });
+                  log("previewFile (no auth) resolved");
+                })
+              }
+              error={errors.noAuth}
+              isLast
+            />
+          </Section>
+        )}
 
         {/* Card 5: Editing / Markup (iOS only) */}
         {isIOS && (
@@ -376,7 +379,7 @@ export default function PreviewTab() {
         </Section>
 
         {/* Card 7: Android Options (Android only) */}
-        {!isIOS && (
+        {Platform.OS === "android" && (
           <Section title="Android Options">
             <Row
               label="Custom chooser title"

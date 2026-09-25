@@ -95,6 +95,17 @@ function DemoVideos() {
               playsInline
             />
           </div>
+          <div className={styles.videoItem}>
+            <h4>Web</h4>
+            <video
+              src="https://github.com/user-attachments/assets/e25183d0-8a7a-403e-83e4-6f4a007d2127"
+              width={640}
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+          </div>
         </div>
       </div>
     </section>

@@ -36,8 +36,10 @@ export type PreviewFileOptions = {
 };
 
 /**
- * Options for previewing multiple files with swipe navigation.
+ * Options for previewing multiple files with swipe navigation (iOS) or opening
+ * each file in a new browser tab (web).
  * @platform ios
+ * @platform web
  */
 export type PreviewFilesOptions = {
   /** Array of local file paths or remote URLs to preview. */

@@ -6,7 +6,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@magrinj/expo-quick-look.svg)](https://www.npmjs.com/package/@magrinj/expo-quick-look)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-brightgreen)
+![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android%20%7C%20Web-brightgreen)
 ![CI](https://github.com/magrinj/expo-quick-look/actions/workflows/ci.yml/badge.svg)
 ![npm downloads](https://img.shields.io/npm/dm/@magrinj/expo-quick-look)
 [![docs](https://img.shields.io/badge/docs-Documentation-blue)](https://magrinj.github.io/expo-quick-look/docs/getting-started)
@@ -23,6 +23,10 @@ A native Expo module for previewing files using QuickLook on iOS and system view
 |:---:|:-------:|
 | <video src="https://github.com/user-attachments/assets/dea18630-4d38-425c-8839-73c46b2cbdfe" width="300" /> | <video src="https://github.com/user-attachments/assets/25238d03-597d-4609-aff7-a691e2a2714c" width="300" /> |
 
+| Web |
+|:---:|
+| <video src="https://github.com/user-attachments/assets/e25183d0-8a7a-403e-83e4-6f4a007d2127" width="640" /> |
+
 ## Installation
 
 ```bash
@@ -37,6 +41,7 @@ Opens a native file preview.
 
 - **iOS:** Presents `QLPreviewController` modally. Promise resolves when the user dismisses the preview.
 - **Android:** Launches an Intent chooser with `ACTION_VIEW`. Promise resolves immediately after launch.
+- **Web:** Opens the file in a new browser tab (`window.open`). Only `http(s):` and `blob:` URIs work (`data:` and `file://` don't). `requestOptions.headers` are ignored, and the promise resolves immediately even if the pop-up was blocked.
 
 ```typescript
 import ExpoQuickLook from '@magrinj/expo-quick-look';
@@ -71,9 +76,12 @@ await ExpoQuickLook.previewFile({
 });
 ```
 
-### `previewFiles(options: PreviewFilesOptions): Promise<void>` *(iOS only)*
+### `previewFiles(options: PreviewFilesOptions): Promise<void>` *(iOS & Web)*
 
 Opens a multi-file preview with swipe navigation.
+
+- **iOS:** Presents `QLPreviewController` with swipe navigation between files.
+- **Web:** Opens each URI in its own browser tab. Browsers may block all but the first tab unless triggered by a direct user gesture.
 
 ```typescript
 await ExpoQuickLook.previewFiles({
@@ -89,6 +97,7 @@ Checks whether a file can be previewed.
 
 - **iOS:** Uses `QLPreviewController.canPreview`.
 - **Android:** Checks if any installed app can handle the file's MIME type.
+- **Web:** Always returns `true` — the browser decides how to handle the URL.
 
 ```typescript
 const supported = await ExpoQuickLook.canPreview('/path/to/file.pdf');
@@ -113,6 +122,8 @@ const thumbnail = await ExpoQuickLook.generateThumbnail({
 ```
 
 > **Note:** `generateThumbnail` only supports local files. Pass a remote URL and it will throw an error.
+>
+> **Web:** Not supported — throws an `ERR_UNAVAILABLE` error. Guard with `Platform.OS !== 'web'` if you target web.
 
 ## Types
 

@@ -4,8 +4,8 @@ sidebar_position: 3
 
 # Multi-File Preview
 
-:::info iOS Only
-`previewFiles` is only available on iOS. On Android, use `previewFile` to open files one at a time.
+:::info iOS & Web
+`previewFiles` is available on iOS and web. On Android, use `previewFile` to open files one at a time. On web, each URI opens in its own browser tab instead of a swipeable gallery.
 :::
 
 Open multiple files in a swipeable gallery using `previewFiles`:
