@@ -2,6 +2,8 @@
   <img src=".github/assets/expo-quick-look-banner.jpg" alt="@magrinj/expo-quick-look" width="100%" />
 </a>
 
+<a href="https://useffect.sh/seal/magrinj/expo-quick-look"><img align="right" width="88" src="https://useffect.sh/seal/magrinj/expo-quick-look.svg" alt="Maintained by useffect.sh"></a>
+
 # @magrinj/expo-quick-look
 
 [![npm version](https://img.shields.io/npm/v/@magrinj/expo-quick-look.svg)](https://www.npmjs.com/package/@magrinj/expo-quick-look)
@@ -212,7 +214,7 @@ If you find this library useful, consider supporting its development:
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://www.linkedin.com/in/jeremy-magrin/">Jérémy Magrin</a>
+  Made with ❤️ by <a href="https://www.linkedin.com/in/jeremy-magrin/">Jérémy Magrin</a>, part of <a href="https://useffect.sh">useffect.sh</a>, a collective of senior React Native engineers
 </p>
 
 <p align="center">
