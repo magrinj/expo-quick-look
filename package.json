@@ -1,6 +1,6 @@
 {
   "name": "@magrinj/expo-quick-look",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Native file preview for Expo — QuickLook on iOS, Intent chooser on Android, new tab on web",
   "main": "build/index.js",
   "types": "build/index.d.ts",

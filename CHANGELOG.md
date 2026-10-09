@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.5.0](https://github.com/magrinj/expo-quick-look/compare/v0.4.0...v0.5.0) (2026-09-25)
+
+
+### Features
+
+* add web support (open previews in a new browser tab) ([6fb5cea](https://github.com/magrinj/expo-quick-look/commit/6fb5ceaf16577c9866bd128e94113bf47a1486fc))
+
 # [0.4.0](https://github.com/magrinj/expo-quick-look/compare/v0.3.1...v0.4.0) (2026-06-03)
 
 
