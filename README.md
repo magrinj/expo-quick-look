@@ -2,9 +2,9 @@
   <img src=".github/assets/expo-quick-look-banner.jpg" alt="@magrinj/expo-quick-look" width="100%" />
 </a>
 
-<a href="https://useffect.sh/seal/magrinj/expo-quick-look"><img align="right" width="88" src="https://useffect.sh/seal/magrinj/expo-quick-look.svg" alt="Maintained by useffect.sh"></a>
-
 # @magrinj/expo-quick-look
+
+<a href="https://useffect.sh/seal/magrinj/expo-quick-look"><img align="right" width="120" src="https://useffect.sh/seal/magrinj/expo-quick-look.svg" alt="Maintained by useffect.sh"></a>
 
 [![npm version](https://img.shields.io/npm/v/@magrinj/expo-quick-look.svg)](https://www.npmjs.com/package/@magrinj/expo-quick-look)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
